@@ -5,18 +5,20 @@
   <title>Runway Elevation Delta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- CSS local -->
   <link rel="stylesheet" href="styles.css" />
 
+  <!-- Leaflet / OpenStreetMap -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
 
   <script
-    defer
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
   </script>
 
+  <!-- JavaScript local -->
   <script defer src="app.js"></script>
 </head>
 
@@ -49,7 +51,7 @@
     </section>
 
     <div id="status" class="status">
-      Prêt. Exemple : LFPG, LFPO, LFML, LFLL, KLAX.
+      Chargement de l’application...
     </div>
 
     <div id="summary" class="cards hidden">
@@ -82,7 +84,9 @@
       <div class="table-title">
         <div>
           <h2>Résultats par QFU</h2>
-          <p>Le delta correspond à : altitude terrain au point projeté − altitude seuil.</p>
+          <p>
+            Le delta correspond à : altitude terrain au point projeté − altitude seuil.
+          </p>
         </div>
       </div>
 
@@ -109,7 +113,8 @@
         <div>
           <h2>Carte des points projetés</h2>
           <p>
-            Chaque marker correspond au point calculé dans l’axe extérieur du QFU, à la distance sélectionnée.
+            Chaque marker correspond au point calculé dans l’axe extérieur du QFU,
+            à la distance sélectionnée.
           </p>
         </div>
       </div>
