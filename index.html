@@ -5,77 +5,41 @@
   <title>Runway Elevation Delta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- CSS local -->
   <link rel="stylesheet" href="styles.css" />
-
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
-
-  <!-- Leaflet JS -->
-  <script
-    defer
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-  </script>
-
-  <!-- App JS local -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script defer src="app.js"></script>
 </head>
-
 <body>
   <div class="container">
     <section class="hero">
       <div class="badge">Runway terrain analysis</div>
-
       <h1>Runway Elevation Delta</h1>
-
       <p>
         Saisis un code aéroport ICAO. L’application télécharge automatiquement les données pistes depuis OurAirports,
         projette un point dans l’axe extérieur de chaque QFU à la distance choisie, puis compare l’altitude terrain
         avec l’altitude du seuil.
       </p>
-
       <div class="form">
         <div>
           <label for="icao">Code aéroport ICAO</label>
           <input id="icao" value="LFPG" placeholder="LFPG" />
         </div>
-
         <div>
           <label for="dist">Distance NM</label>
           <input id="dist" type="number" value="3.14" step="0.01" min="0.1" />
         </div>
-
         <button id="computeBtn" type="button">Compute</button>
       </div>
     </section>
 
-    <div id="status" class="status">
-      Chargement de l’application...
-    </div>
+    <div id="status" class="status">Chargement de l’application...</div>
 
     <div id="summary" class="cards hidden">
-      <div class="card">
-        <div class="label">Aéroport</div>
-        <div id="sumAirport" class="value">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">QFU détectés</div>
-        <div id="sumQfu" class="value">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">Delta min</div>
-        <div id="sumMin" class="value">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">Delta max</div>
-        <div id="sumMax" class="value">—</div>
-      </div>
+      <div class="card"><div class="label">Aéroport</div><div id="sumAirport" class="value">—</div></div>
+      <div class="card"><div class="label">QFU détectés</div><div id="sumQfu" class="value">—</div></div>
+      <div class="card"><div class="label">Delta min</div><div id="sumMin" class="value">—</div></div>
+      <div class="card"><div class="label">Delta max</div><div id="sumMax" class="value">—</div></div>
     </div>
 
     <div id="actions" class="actions hidden">
@@ -86,12 +50,9 @@
       <div class="table-title">
         <div>
           <h2>Résultats par QFU</h2>
-          <p>
-            Le delta correspond à : altitude terrain au point projeté − altitude seuil.
-          </p>
+          <p>Le delta correspond à : altitude terrain au point projeté − altitude seuil.</p>
         </div>
       </div>
-
       <div class="table-wrap">
         <table>
           <thead>
@@ -114,19 +75,14 @@
       <div class="table-title">
         <div>
           <h2>Carte des points projetés</h2>
-          <p>
-            Chaque marker correspond au point calculé dans l’axe extérieur du QFU,
-            à la distance sélectionnée.
-          </p>
+          <p>Chaque marker correspond au point calculé dans l’axe extérieur du QFU, à la distance sélectionnée.</p>
         </div>
       </div>
-
       <div id="map"></div>
     </section>
 
     <div class="footer">
-      Sources : OurAirports pour les seuils de piste ; Open-Elevation pour l’altitude terrain ;
-      fond cartographique OpenStreetMap via Leaflet.
+      Sources : OurAirports pour les seuils de piste ; Open-Elevation pour l’altitude terrain ; fond cartographique OpenStreetMap via Leaflet.
       Pour usage opérationnel/safety, vérifier avec AIP ou source interne validée.
     </div>
   </div>
