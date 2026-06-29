@@ -1,168 +1,496 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Runway Elevation Delta</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Runway Elevation Delta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-body {
-  font-family: Arial;
-  margin: 20px;
-  background: #0f172a;
-  color: white;
-}
-input, button {
-  padding: 10px;
-  font-size: 16px;
-  margin: 5px;
-}
-button {
-  background: #22d3ee;
-  border: none;
-  cursor: pointer;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-td, th {
-  padding: 8px;
-  border-bottom: 1px solid #444;
-}
-.green { color: #4ade80; }
-.red { color: #f87171; }
-</style>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --card2: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --cyan: #22d3ee;
+      --green: #4ade80;
+      --red: #fb7185;
+      --amber: #facc15;
+      --border: #334155;
+    }
 
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #164e63 0, #0f172a 35%, #020617 100%);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: auto;
+      padding: 28px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      border-radius: 28px;
+      padding: 28px;
+      margin-bottom: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 34px;
+      letter-spacing: -0.5px;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .form {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 1fr 160px 150px;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: white;
+      padding: 13px 14px;
+      border-radius: 14px;
+      font-size: 18px;
+      outline: none;
+      text-transform: uppercase;
+    }
+
+    input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+    }
+
+    button {
+      border: none;
+      background: var(--cyan);
+      color: #020617;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #67e8f9;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin: 16px 0;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .status.ok {
+      color: var(--green);
+      border-color: rgba(74, 222, 128, 0.35);
+    }
+
+    .status.warn {
+      color: var(--amber);
+      border-color: rgba(250, 204, 21, 0.35);
+    }
+
+    .status.err {
+      color: var(--red);
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .card .label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card .value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: rgba(2, 6, 23, 0.75);
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .qfu {
+      display: inline-block;
+      background: rgba(34, 211, 238, 0.12);
+      color: #a5f3fc;
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 800;
+    }
+
+    .positive {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .negative {
+      color: var(--red);
+      font-weight: 800;
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      margin: 12px 0 18px 0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .secondary {
+      background: white;
+      color: #020617;
+    }
+
+    @media (max-width: 850px) {
+      .form {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="container">
+    <section class="hero">
+      <h1>Runway Elevation Delta</h1>
+      <p>
+        Saisis un code aéroport ICAO. L’application télécharge automatiquement les données pistes depuis OurAirports,
+        projette un point dans l’axe extérieur de chaque QFU à la distance choisie, puis compare l’altitude terrain
+        avec l’altitude du seuil.
+      </p>
 
-<h2>Runway Elevation Delta</h2>
+      <div class="form">
+        <div>
+          <label for="icao">Code aéroport ICAO</label>
+          <input id="icao" value="LFPG" placeholder="LFPG" />
+        </div>
 
-<input id="icao" placeholder="LFPG">
-<input id="dist" type="number" value="3.14" step="0.1">
+        <div>
+          <label for="dist">Distance NM</label>
+          <input id="dist" type="number" value="3.14" step="0.01" min="0.1" />
+        </div>
 
-<button onclick="run()">Compute</button>
+        <button id="computeBtn" onclick="run()">Compute</button>
+      </div>
+    </section>
 
-<div id="status"></div>
+    <div id="status" class="status">
+      Prêt. Exemple : LFPG, LFPO, LFML, LFLL, KLAX.
+    </div>
 
-<table id="table">
-<thead>
-<tr>
-<th>QFU</th>
-<th>Threshold ft</th>
-<th>Terrain ft</th>
-<th>Delta</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
+    <div id="summary" class="cards" style="display:none;">
+      <div class="card">
+        <div class="label">Aéroport</div>
+        <div id="sumAirport" class="value">—</div>
+      </div>
+      <div class="card">
+        <div class="label">QFU détectés</div>
+        <div id="sumQfu" class="value">—</div>
+      </div>
+      <div class="card">
+        <div class="label">Delta min</div>
+        <div id="sumMin" class="value">—</div>
+      </div>
+      <div class="card">
+        <div class="label">Delta max</div>
+        <div id="sumMax" class="value">—</div>
+      </div>
+    </div>
+
+    <div class="actions" id="actions" style="display:none;">
+      <button class="secondary" onclick="downloadCsv()">Export CSV</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>QFU</th>
+            <th>Piste</th>
+            <th>Seuil ft</th>
+            <th>Terrain point ft</th>
+            <th>Delta ft</th>
+            <th>Point projeté</th>
+            <th>Bearing</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      Sources : OurAirports pour les seuils de piste ; Open-Elevation pour l’altitude terrain.
+      Pour usage opérationnel/safety, vérifier avec AIP ou source interne validée.
+    </div>
+  </div>
 
 <script>
-
 const R = 6371.01;
+const RUNWAYS_CSV_URL = "https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/runways.csv";
+const OPEN_ELEVATION_URL = "https://api.open-elevation.com/api/v1/lookup";
+
+let latestRows = [];
+
+function setStatus(message, type = "") {
+  const el = document.getElementById("status");
+  el.className = "status " + type;
+  el.textContent = message;
+}
+
+function toRad(x) {
+  return x * Math.PI / 180;
+}
+
+function toDeg(x) {
+  return x * 180 / Math.PI;
+}
 
 function bearing(lat1, lon1, lat2, lon2) {
-  lat1 = toRad(lat1); lon1 = toRad(lon1);
-  lat2 = toRad(lat2); lon2 = toRad(lon2);
+  lat1 = toRad(lat1);
+  lon1 = toRad(lon1);
+  lat2 = toRad(lat2);
+  lon2 = toRad(lon2);
 
-  let dLon = lon2 - lon1;
-  let y = Math.sin(dLon) * Math.cos(lat2);
-  let x = Math.cos(lat1)*Math.sin(lat2) -
-          Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+  const dLon = lon2 - lon1;
+  const y = Math.sin(dLon) * Math.cos(lat2);
+  const x =
+    Math.cos(lat1) * Math.sin(lat2) -
+    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
 
   return (toDeg(Math.atan2(y, x)) + 360) % 360;
 }
 
-function getPoint(lat, lon, brng, d) {
-  let lat1 = toRad(lat), lon1 = toRad(lon);
-  brng = toRad(brng);
+function getPoint(lat, lon, brng, dKm) {
+  const lat1 = toRad(lat);
+  const lon1 = toRad(lon);
+  const brngRad = toRad(brng);
 
-  let lat2 = Math.asin(Math.sin(lat1)*Math.cos(d/R) +
-             Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng));
-
-  let lon2 = lon1 + Math.atan2(
-    Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1),
-    Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2)
+  const lat2 = Math.asin(
+    Math.sin(lat1) * Math.cos(dKm / R) +
+    Math.cos(lat1) * Math.sin(dKm / R) * Math.cos(brngRad)
   );
 
-  return [toDeg(lat2), toDeg(lon2)];
+  const lon2 =
+    lon1 +
+    Math.atan2(
+      Math.sin(brngRad) * Math.sin(dKm / R) * Math.cos(lat1),
+      Math.cos(dKm / R) - Math.sin(lat1) * Math.sin(lat2)
+    );
+
+  return {
+    lat: toDeg(lat2),
+    lon: toDeg(lon2)
+  };
 }
 
-function toRad(x){ return x*Math.PI/180 }
-function toDeg(x){ return x*180/Math.PI }
+/* Parser CSV robuste : gère les virgules entre guillemets */
+function parseCSV(text) {
+  const rows = [];
+  let current = "";
+  let row = [];
+  let inQuotes = false;
 
-async function run() {
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const next = text[i + 1];
 
-  let icao = document.getElementById("icao").value.toUpperCase();
-  let d = parseFloat(document.getElementById("dist").value) * 1.852;
-
-  document.getElementById("status").innerText = "Loading...";
-  document.querySelector("#table tbody").innerHTML = "";
-
-  let csv = await fetch("https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/runways.csv")
-                  .then(r => r.text());
-
-  let lines = csv.split("\n");
-  let headers = lines[0].split(",");
-
-  let results = [];
-
-  for (let i=1;i<lines.length;i++) {
-    let cols = lines[i].split(",");
-
-    if (cols[headers.indexOf("airport_ident")] === icao) {
-
-      let le = cols[headers.indexOf("le_ident")];
-      let he = cols[headers.indexOf("he_ident")];
-
-      let leLat = parseFloat(cols[headers.indexOf("le_latitude_deg")]);
-      let leLon = parseFloat(cols[headers.indexOf("le_longitude_deg")]);
-      let heLat = parseFloat(cols[headers.indexOf("he_latitude_deg")]);
-      let heLon = parseFloat(cols[headers.indexOf("he_longitude_deg")]);
-
-      let leElev = parseFloat(cols[headers.indexOf("le_elevation_ft")] || 0);
-      let heElev = parseFloat(cols[headers.indexOf("he_elevation_ft")] || 0);
-
-      let brng1 = bearing(heLat, heLon, leLat, leLon);
-      let p1 = getPoint(leLat, leLon, brng1, d);
-
-      let brng2 = bearing(leLat, leLon, heLat, heLon);
-      let p2 = getPoint(heLat, heLon, brng2, d);
-
-      results.push({qfu: le, lat:p1[0], lon:p1[1], elev:leElev});
-      results.push({qfu: he, lat:p2[0], lon:p2[1], elev:heElev});
+    if (c === '"' && inQuotes && next === '"') {
+      current += '"';
+      i++;
+    } else if (c === '"') {
+      inQuotes = !inQuotes;
+    } else if (c === "," && !inQuotes) {
+      row.push(current);
+      current = "";
+    } else if ((c === "\n" || c === "\r") && !inQuotes) {
+      if (current.length || row.length) {
+        row.push(current);
+        rows.push(row);
+        row = [];
+        current = "";
+      }
+      if (c === "\r" && next === "\n") i++;
+    } else {
+      current += c;
     }
   }
 
-  for (let r of results) {
-
-    let elev = await fetch(`https://api.open-elevation.com/api/v1/lookup?locations=${r.lat},${r.lon}`)
-      .then(res=>res.json())
-      .then(data=>data.results[0].elevation*3.28084);
-
-    let delta = elev - r.elev;
-
-    let row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td>${r.qfu}</td>
-      <td>${r.elev.toFixed(0)}</td>
-      <td>${elev.toFixed(0)}</td>
-      <td class="${delta>=0 ? 'green':'red'}">${delta.toFixed(0)}</td>
-    `;
-
-    document.querySelector("#table tbody").appendChild(row);
-
-    await new Promise(r=>setTimeout(r,300));
+  if (current.length || row.length) {
+    row.push(current);
+    rows.push(row);
   }
 
-  document.getElementById("status").innerText = "Done";
+  const headers = rows.shift();
+  if (!headers) return [];
+
+  return rows.map(values => {
+    const obj = {};
+    headers.forEach((h, i) => {
+      obj[h] = values[i] || "";
+    });
+    return obj;
+  });
 }
 
-</script>
+function n(value) {
+  const x = parseFloat(value);
+  return Number.isFinite(x) ? x : null;
+}
 
-</body>
-</html>
+function fmt(value, decimals = 0) {
+  if (value === null || value === undefined || Number.isNaN(value)) return "—";
+  return Number(value).toLocaleString("fr-FR", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
+}
+
+async function getElevationFt(lat, lon) {
+  const url = `${OPEN_ELEVATION_URL}?locations=${lat},${lon}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Erreur Open-Elevation " + response.status);
+  }
+
+  const data = await response.json();
+
+  if (!data.results || !data.results[0]) {
+    throw new Error("Réponse Open-Elevation vide");
+  }
+
+  return data.results[0].elevation * 3.28084;
+}
+
+async function run() {
+  const btn = document.getElementById("computeBtn");
+  const tbody = document.getElementById("tbody");
+
+  const icao = document.getElementById("icao").value.trim().toUpperCase();
+  const distanceNm = parseFloat(document.getElementById("dist").value);
+  const dKm = distanceNm * 1.852;
+
+  latestRows = [];
+  tbody.innerHTML = "";
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("actions").style.display = "none";
+
+  if (!icao || !/^[A-Z0-9]{3,5}$/.test(icao)) {
+    setStatus("Code aéroport invalide. Exemple : LFPG, LFPO, LFML, KLAX.", "err");
+    return;
+  }
+
+  if (!Number.isFinite(distanceNm) || distanceNm <= 0) {
+    setStatus("Distance invalide. Saisis une distance positive en NM.", "err");
+    return;
+  }
+
+  btn.disabled = true;
+  setStatus(`Téléchargement automatique du fichier runways.csv depuis OurAirports pour ${icao}...`, "");
+
+  try {
+    const csvText = await fetch(RUNWAYS_CSV_URL).then(r => {
+      if (!r.ok) throw new Error("Impossible de télécharger runways.csv");
+      return r.text();
+    });
+
+    setStatus("Fichier téléchargé. Analyse des pistes...", "");
+
