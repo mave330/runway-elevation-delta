@@ -4,253 +4,15 @@
   <meta charset="UTF-8" />
   <title>Runway Elevation Delta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card: #111827;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --cyan: #22d3ee;
-      --green: #4ade80;
-      --red: #fb7185;
-      --amber: #facc15;
-      --border: #334155;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: radial-gradient(circle at top, #164e63 0, #0f172a 35%, #020617 100%);
-      color: var(--text);
-    }
-
-    .container {
-      max-width: 1150px;
-      margin: auto;
-      padding: 28px;
-    }
-
-    .hero {
-      background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(15, 23, 42, 0.95));
-      border: 1px solid rgba(34, 211, 238, 0.25);
-      border-radius: 28px;
-      padding: 28px;
-      margin-bottom: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-    }
-
-    h1 {
-      margin: 0 0 10px 0;
-      font-size: 34px;
-      letter-spacing: -0.5px;
-    }
-
-    p {
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .form {
-      margin-top: 22px;
-      display: grid;
-      grid-template-columns: 1fr 160px 150px;
-      gap: 12px;
-      align-items: end;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      border: 1px solid var(--border);
-      background: #020617;
-      color: white;
-      padding: 13px 14px;
-      border-radius: 14px;
-      font-size: 18px;
-      outline: none;
-      text-transform: uppercase;
-    }
-
-    input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
-    }
-
-    button {
-      border: none;
-      background: var(--cyan);
-      color: #020617;
-      padding: 14px 18px;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #67e8f9;
-    }
-
-    button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    .status {
-      margin: 16px 0;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      white-space: pre-wrap;
-    }
-
-    .status.ok {
-      color: var(--green);
-      border-color: rgba(74, 222, 128, 0.35);
-    }
-
-    .status.warn {
-      color: var(--amber);
-      border-color: rgba(250, 204, 21, 0.35);
-    }
-
-    .status.err {
-      color: var(--red);
-      border-color: rgba(251, 113, 133, 0.35);
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .card {
-      background: rgba(15, 23, 42, 0.82);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px;
-    }
-
-    .card .label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .card .value {
-      margin-top: 8px;
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      background: rgba(15, 23, 42, 0.86);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 920px;
-    }
-
-    th {
-      text-align: left;
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      background: rgba(2, 6, 23, 0.75);
-      padding: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    td {
-      padding: 14px;
-      border-bottom: 1px solid rgba(51, 65, 85, 0.7);
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    .qfu {
-      display: inline-block;
-      background: rgba(34, 211, 238, 0.12);
-      color: #a5f3fc;
-      border: 1px solid rgba(34, 211, 238, 0.25);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-weight: 800;
-    }
-
-    .positive {
-      color: var(--green);
-      font-weight: 800;
-    }
-
-    .negative {
-      color: var(--red);
-      font-weight: 800;
-    }
-
-    .footer {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .actions {
-      margin: 12px 0 18px 0;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .secondary {
-      background: white;
-      color: #020617;
-    }
-
-    @media (max-width: 850px) {
-      .form {
-        grid-template-columns: 1fr;
-      }
-
-      .cards {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      h1 {
-        font-size: 27px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
 </head>
 
 <body>
   <div class="container">
     <section class="hero">
       <h1>Runway Elevation Delta</h1>
+
       <p>
         Saisis un code aéroport ICAO. L’application télécharge automatiquement les données pistes depuis OurAirports,
         projette un point dans l’axe extérieur de chaque QFU à la distance choisie, puis compare l’altitude terrain
@@ -268,7 +30,7 @@
           <input id="dist" type="number" value="3.14" step="0.01" min="0.1" />
         </div>
 
-        <button id="computeBtn">Compute</button>
+        <button id="computeBtn" type="button">Compute</button>
       </div>
     </section>
 
@@ -276,27 +38,30 @@
       Prêt. Exemple : LFPG, LFPO, LFML, LFLL, KLAX.
     </div>
 
-    <div id="summary" class="cards" style="display:none;">
+    <div id="summary" class="cards hidden">
       <div class="card">
         <div class="label">Aéroport</div>
         <div id="sumAirport" class="value">—</div>
       </div>
+
       <div class="card">
         <div class="label">QFU détectés</div>
         <div id="sumQfu" class="value">—</div>
       </div>
+
       <div class="card">
         <div class="label">Delta min</div>
         <div id="sumMin" class="value">—</div>
       </div>
+
       <div class="card">
         <div class="label">Delta max</div>
         <div id="sumMax" class="value">—</div>
       </div>
     </div>
 
-    <div class="actions" id="actions" style="display:none;">
-      <button id="csvBtn" class="secondary">Export CSV</button>
+    <div id="actions" class="actions hidden">
+      <button id="csvBtn" type="button" class="secondary">Export CSV</button>
     </div>
 
     <div class="table-wrap">
@@ -321,122 +86,5 @@
       Pour usage opérationnel/safety, vérifier avec AIP ou source interne validée.
     </div>
   </div>
-
-<script>
-const R = 6371.01;
-const RUNWAYS_CSV_URL = "https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/runways.csv";
-const OPEN_ELEVATION_URL = "https://api.open-elevation.com/api/v1/lookup";
-
-let latestRows = [];
-
-function setStatus(message, type) {
-  const el = document.getElementById("status");
-  el.className = "status " + (type || "");
-  el.textContent = message;
-}
-
-function toRad(x) {
-  return x * Math.PI / 180;
-}
-
-function toDeg(x) {
-  return x * 180 / Math.PI;
-}
-
-function bearing(lat1, lon1, lat2, lon2) {
-  lat1 = toRad(lat1);
-  lon1 = toRad(lon1);
-  lat2 = toRad(lat2);
-  lon2 = toRad(lon2);
-
-  const dLon = lon2 - lon1;
-  const y = Math.sin(dLon) * Math.cos(lat2);
-  const x =
-    Math.cos(lat1) * Math.sin(lat2) -
-    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-
-  return (toDeg(Math.atan2(y, x)) + 360) % 360;
-}
-
-function getPoint(lat, lon, brng, dKm) {
-  const lat1 = toRad(lat);
-  const lon1 = toRad(lon);
-  const brngRad = toRad(brng);
-
-  const lat2 = Math.asin(
-    Math.sin(lat1) * Math.cos(dKm / R) +
-    Math.cos(lat1) * Math.sin(dKm / R) * Math.cos(brngRad)
-  );
-
-  const lon2 =
-    lon1 +
-    Math.atan2(
-      Math.sin(brngRad) * Math.sin(dKm / R) * Math.cos(lat1),
-      Math.cos(dKm / R) - Math.sin(lat1) * Math.sin(lat2)
-    );
-
-  return {
-    lat: toDeg(lat2),
-    lon: toDeg(lon2)
-  };
-}
-
-function parseCSV(text) {
-  const rows = [];
-  let current = "";
-  let row = [];
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    const next = text[i + 1];
-
-    if (c === '"' && inQuotes && next === '"') {
-      current += '"';
-      i++;
-    } else if (c === '"') {
-      inQuotes = !inQuotes;
-    } else if (c === "," && !inQuotes) {
-      row.push(current);
-      current = "";
-    } else if ((c === "\n" || c === "\r") && !inQuotes) {
-      if (current.length || row.length) {
-        row.push(current);
-        rows.push(row);
-        row = [];
-        current = "";
-      }
-      if (c === "\r" && next === "\n") i++;
-    } else {
-      current += c;
-    }
-  }
-
-  if (current.length || row.length) {
-    row.push(current);
-    rows.push(row);
-  }
-
-  const headers = rows.shift();
-  if (!headers) return [];
-
-  return rows.map(function(values) {
-    const obj = {};
-    headers.forEach(function(h, i) {
-      obj[h] = values[i] || "";
-    });
-    return obj;
-  });
-}
-
-function n(value) {
-  const x = parseFloat(value);
-  return Number.isFinite(x) ? x : null;
-}
-
-function fmt(value, decimals) {
-  if (value === null || value === undefined || Number.isNaN(value)) return "—";
-  return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: decimals || 0,
-    maximumFractionDigits: decimals || 0
-  });
+</body>
+</html>
