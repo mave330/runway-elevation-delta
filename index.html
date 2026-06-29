@@ -4,13 +4,27 @@
   <meta charset="UTF-8" />
   <title>Runway Elevation Delta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="stylesheet" href="styles.css" />
-  <script src="app.js" defer></script>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <script
+    defer
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+  </script>
+
+  <script defer src="app.js"></script>
 </head>
 
 <body>
   <div class="container">
     <section class="hero">
+      <div class="badge">Runway terrain analysis</div>
+
       <h1>Runway Elevation Delta</h1>
 
       <p>
@@ -64,25 +78,48 @@
       <button id="csvBtn" type="button" class="secondary">Export CSV</button>
     </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>QFU</th>
-            <th>Piste</th>
-            <th>Seuil ft</th>
-            <th>Terrain point ft</th>
-            <th>Delta ft</th>
-            <th>Point projeté</th>
-            <th>Bearing</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+    <div class="table-card">
+      <div class="table-title">
+        <div>
+          <h2>Résultats par QFU</h2>
+          <p>Le delta correspond à : altitude terrain au point projeté − altitude seuil.</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>QFU</th>
+              <th>Piste</th>
+              <th>Seuil ft</th>
+              <th>Terrain point ft</th>
+              <th>Delta ft</th>
+              <th>Point projeté</th>
+              <th>Bearing</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
     </div>
 
+    <section class="map-card">
+      <div class="table-title">
+        <div>
+          <h2>Carte des points projetés</h2>
+          <p>
+            Chaque marker correspond au point calculé dans l’axe extérieur du QFU, à la distance sélectionnée.
+          </p>
+        </div>
+      </div>
+
+      <div id="map"></div>
+    </section>
+
     <div class="footer">
-      Sources : OurAirports pour les seuils de piste ; Open-Elevation pour l’altitude terrain.
+      Sources : OurAirports pour les seuils de piste ; Open-Elevation pour l’altitude terrain ;
+      fond cartographique OpenStreetMap via Leaflet.
       Pour usage opérationnel/safety, vérifier avec AIP ou source interne validée.
     </div>
   </div>
