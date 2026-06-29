@@ -9,7 +9,6 @@
     :root {
       --bg: #0f172a;
       --card: #111827;
-      --card2: #1e293b;
       --text: #f8fafc;
       --muted: #94a3b8;
       --cyan: #22d3ee;
@@ -112,6 +111,7 @@
       background: rgba(15, 23, 42, 0.75);
       border: 1px solid var(--border);
       color: var(--muted);
+      white-space: pre-wrap;
     }
 
     .status.ok {
@@ -268,7 +268,7 @@
           <input id="dist" type="number" value="3.14" step="0.01" min="0.1" />
         </div>
 
-        <button id="computeBtn" onclick="run()">Compute</button>
+        <button id="computeBtn">Compute</button>
       </div>
     </section>
 
@@ -296,7 +296,7 @@
     </div>
 
     <div class="actions" id="actions" style="display:none;">
-      <button class="secondary" onclick="downloadCsv()">Export CSV</button>
+      <button id="csvBtn" class="secondary">Export CSV</button>
     </div>
 
     <div class="table-wrap">
@@ -329,9 +329,9 @@ const OPEN_ELEVATION_URL = "https://api.open-elevation.com/api/v1/lookup";
 
 let latestRows = [];
 
-function setStatus(message, type = "") {
+function setStatus(message, type) {
   const el = document.getElementById("status");
-  el.className = "status " + type;
+  el.className = "status " + (type || "");
   el.textContent = message;
 }
 
@@ -381,7 +381,6 @@ function getPoint(lat, lon, brng, dKm) {
   };
 }
 
-/* Parser CSV robuste : gère les virgules entre guillemets */
 function parseCSV(text) {
   const rows = [];
   let current = "";
@@ -421,9 +420,9 @@ function parseCSV(text) {
   const headers = rows.shift();
   if (!headers) return [];
 
-  return rows.map(values => {
+  return rows.map(function(values) {
     const obj = {};
-    headers.forEach((h, i) => {
+    headers.forEach(function(h, i) {
       obj[h] = values[i] || "";
     });
     return obj;
@@ -435,62 +434,9 @@ function n(value) {
   return Number.isFinite(x) ? x : null;
 }
 
-function fmt(value, decimals = 0) {
+function fmt(value, decimals) {
   if (value === null || value === undefined || Number.isNaN(value)) return "—";
   return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
+    minimumFractionDigits: decimals || 0,
+    maximumFractionDigits: decimals || 0
   });
-}
-
-async function getElevationFt(lat, lon) {
-  const url = `${OPEN_ELEVATION_URL}?locations=${lat},${lon}`;
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error("Erreur Open-Elevation " + response.status);
-  }
-
-  const data = await response.json();
-
-  if (!data.results || !data.results[0]) {
-    throw new Error("Réponse Open-Elevation vide");
-  }
-
-  return data.results[0].elevation * 3.28084;
-}
-
-async function run() {
-  const btn = document.getElementById("computeBtn");
-  const tbody = document.getElementById("tbody");
-
-  const icao = document.getElementById("icao").value.trim().toUpperCase();
-  const distanceNm = parseFloat(document.getElementById("dist").value);
-  const dKm = distanceNm * 1.852;
-
-  latestRows = [];
-  tbody.innerHTML = "";
-  document.getElementById("summary").style.display = "none";
-  document.getElementById("actions").style.display = "none";
-
-  if (!icao || !/^[A-Z0-9]{3,5}$/.test(icao)) {
-    setStatus("Code aéroport invalide. Exemple : LFPG, LFPO, LFML, KLAX.", "err");
-    return;
-  }
-
-  if (!Number.isFinite(distanceNm) || distanceNm <= 0) {
-    setStatus("Distance invalide. Saisis une distance positive en NM.", "err");
-    return;
-  }
-
-  btn.disabled = true;
-  setStatus(`Téléchargement automatique du fichier runways.csv depuis OurAirports pour ${icao}...`, "");
-
-  try {
-    const csvText = await fetch(RUNWAYS_CSV_URL).then(r => {
-      if (!r.ok) throw new Error("Impossible de télécharger runways.csv");
-      return r.text();
-    });
-
-    setStatus("Fichier téléchargé. Analyse des pistes...", "");
-
