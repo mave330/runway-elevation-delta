@@ -1,12 +1,168 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Runway Elevation Delta</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <div id="root"></div>
-    /src/main.jsxscript>
-  </body>
+<head>
+<meta charset="UTF-8">
+<title>Runway Elevation Delta</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial;
+  margin: 20px;
+  background: #0f172a;
+  color: white;
+}
+input, button {
+  padding: 10px;
+  font-size: 16px;
+  margin: 5px;
+}
+button {
+  background: #22d3ee;
+  border: none;
+  cursor: pointer;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+td, th {
+  padding: 8px;
+  border-bottom: 1px solid #444;
+}
+.green { color: #4ade80; }
+.red { color: #f87171; }
+</style>
+
+</head>
+
+<body>
+
+<h2>Runway Elevation Delta</h2>
+
+<input id="icao" placeholder="LFPG">
+<input id="dist" type="number" value="3.14" step="0.1">
+
+<button onclick="run()">Compute</button>
+
+<div id="status"></div>
+
+<table id="table">
+<thead>
+<tr>
+<th>QFU</th>
+<th>Threshold ft</th>
+<th>Terrain ft</th>
+<th>Delta</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+
+const R = 6371.01;
+
+function bearing(lat1, lon1, lat2, lon2) {
+  lat1 = toRad(lat1); lon1 = toRad(lon1);
+  lat2 = toRad(lat2); lon2 = toRad(lon2);
+
+  let dLon = lon2 - lon1;
+  let y = Math.sin(dLon) * Math.cos(lat2);
+  let x = Math.cos(lat1)*Math.sin(lat2) -
+          Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+
+  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+
+function getPoint(lat, lon, brng, d) {
+  let lat1 = toRad(lat), lon1 = toRad(lon);
+  brng = toRad(brng);
+
+  let lat2 = Math.asin(Math.sin(lat1)*Math.cos(d/R) +
+             Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng));
+
+  let lon2 = lon1 + Math.atan2(
+    Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1),
+    Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2)
+  );
+
+  return [toDeg(lat2), toDeg(lon2)];
+}
+
+function toRad(x){ return x*Math.PI/180 }
+function toDeg(x){ return x*180/Math.PI }
+
+async function run() {
+
+  let icao = document.getElementById("icao").value.toUpperCase();
+  let d = parseFloat(document.getElementById("dist").value) * 1.852;
+
+  document.getElementById("status").innerText = "Loading...";
+  document.querySelector("#table tbody").innerHTML = "";
+
+  let csv = await fetch("https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/runways.csv")
+                  .then(r => r.text());
+
+  let lines = csv.split("\n");
+  let headers = lines[0].split(",");
+
+  let results = [];
+
+  for (let i=1;i<lines.length;i++) {
+    let cols = lines[i].split(",");
+
+    if (cols[headers.indexOf("airport_ident")] === icao) {
+
+      let le = cols[headers.indexOf("le_ident")];
+      let he = cols[headers.indexOf("he_ident")];
+
+      let leLat = parseFloat(cols[headers.indexOf("le_latitude_deg")]);
+      let leLon = parseFloat(cols[headers.indexOf("le_longitude_deg")]);
+      let heLat = parseFloat(cols[headers.indexOf("he_latitude_deg")]);
+      let heLon = parseFloat(cols[headers.indexOf("he_longitude_deg")]);
+
+      let leElev = parseFloat(cols[headers.indexOf("le_elevation_ft")] || 0);
+      let heElev = parseFloat(cols[headers.indexOf("he_elevation_ft")] || 0);
+
+      let brng1 = bearing(heLat, heLon, leLat, leLon);
+      let p1 = getPoint(leLat, leLon, brng1, d);
+
+      let brng2 = bearing(leLat, leLon, heLat, heLon);
+      let p2 = getPoint(heLat, heLon, brng2, d);
+
+      results.push({qfu: le, lat:p1[0], lon:p1[1], elev:leElev});
+      results.push({qfu: he, lat:p2[0], lon:p2[1], elev:heElev});
+    }
+  }
+
+  for (let r of results) {
+
+    let elev = await fetch(`https://api.open-elevation.com/api/v1/lookup?locations=${r.lat},${r.lon}`)
+      .then(res=>res.json())
+      .then(data=>data.results[0].elevation*3.28084);
+
+    let delta = elev - r.elev;
+
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${r.qfu}</td>
+      <td>${r.elev.toFixed(0)}</td>
+      <td>${elev.toFixed(0)}</td>
+      <td class="${delta>=0 ? 'green':'red'}">${delta.toFixed(0)}</td>
+    `;
+
+    document.querySelector("#table tbody").appendChild(row);
+
+    await new Promise(r=>setTimeout(r,300));
+  }
+
+  document.getElementById("status").innerText = "Done";
+}
+
+</script>
+
+</body>
 </html>
